@@ -3,29 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Diary</title>
+    <title>Uranium Diary</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .page { display: none; }
         .active { display: block; }
-        body { background: radial-gradient(circle at top right, #1e1b4b, #0f172a); min-height: 100vh; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        body { background: #0f0326; min-height: 100vh; color: #fff; }
+        
+        /* Neon UV Styling */
+        .glass { 
+            background: rgba(18, 255, 120, 0.03); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(18, 255, 120, 0.2); 
+        }
+        .text-glow { color: #12ff78; text-shadow: 0 0 10px #12ff78; }
+        
+        /* The Cool DIARY Logo */
+        .logo-style {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #0f0326;
+            -webkit-text-stroke: 2px #12ff78;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            letter-spacing: -2px;
+        }
+        
+        .bg-glow { background: #12ff78; color: #000; box-shadow: 0 0 15px #12ff78; }
+        .border-glow { border: 1px solid #12ff78; }
     </style>
 </head>
-<body class="text-white p-4 font-sans">
+<body class="p-4 font-mono">
 
     <!-- 1. AUTH -->
-    <div id="auth-page" class="page active max-w-sm mx-auto mt-20 glass p-8 rounded-3xl text-center shadow-2xl">
-        <h2 class="text-xl font-bold mb-6 text-indigo-400">VAULT LOCKED</h2>
-        <input type="password" id="pin-input" maxlength="4" class="w-32 bg-white/10 text-center text-2xl font-bold py-3 mb-6 rounded-2xl outline-none border border-white/20" placeholder="••••">
-        <button onclick="checkPin()" class="w-full py-3 bg-indigo-600 rounded-2xl font-bold hover:bg-indigo-500 transition">ENTER</button>
+    <div id="auth-page" class="page active max-w-sm mx-auto mt-20 glass p-8 rounded-3xl text-center">
+        <h2 class="text-xl font-bold mb-6 text-glow">VAULT_LOCKED</h2>
+        <input type="password" id="pin-input" maxlength="4" class="w-32 bg-[#0f0326] text-center text-2xl font-bold py-3 mb-6 rounded-2xl outline-none border-glow" placeholder="••••">
+        <button onclick="checkPin()" class="w-full py-3 bg-glow rounded-2xl font-bold hover:opacity-80 transition">UNLOCK</button>
     </div>
 
     <!-- 2. LIST -->
     <div id="list-page" class="page max-w-md mx-auto">
         <header class="flex justify-between items-center py-8">
-            <h1 class="text-3xl font-black text-indigo-300">MY DIARY</h1>
-            <button onclick="openNewNote()" class="p-4 bg-indigo-600 rounded-2xl font-bold shadow-lg">+</button>
+            <h1 class="logo-style">DIARY</h1>
+            <button onclick="openNewNote()" class="p-4 bg-glow rounded-2xl font-bold shadow-lg">+</button>
         </header>
         <div id="notes-grid" class="grid grid-cols-1 gap-4"></div>
     </div>
@@ -33,18 +53,18 @@
     <!-- 3. EDITOR / VIEWER -->
     <div id="editor-page" class="page max-w-md mx-auto min-h-[90vh] mt-4">
         <div class="flex justify-between items-center mb-6">
-            <button onclick="showList()" class="text-indigo-400">← Back</button>
+            <button onclick="showList()" class="text-glow">← BACK</button>
             <div id="action-btns" class="flex gap-4">
                 <button onclick="enableEdit()" id="edit-btn" class="text-2xl">✏️</button>
-                <button onclick="saveNote()" id="publish-btn" class="hidden px-4 py-2 bg-indigo-600 rounded-xl text-sm font-bold">PUBLISH</button>
+                <button onclick="saveNote()" id="publish-btn" class="hidden px-4 py-2 bg-glow rounded-xl text-sm font-bold">PUBLISH</button>
             </div>
         </div>
-        <input type="text" id="note-title" readonly class="w-full text-2xl font-bold mb-4 bg-transparent outline-none">
+        <input type="text" id="note-title" readonly class="w-full text-2xl font-bold mb-4 bg-transparent outline-none border-b border-white/10">
         <textarea id="note-content" readonly class="w-full h-96 bg-transparent outline-none resize-none"></textarea>
     </div>
 
     <script>
-        let notes = JSON.parse(localStorage.getItem('my-diary') || '[]');
+        let notes = JSON.parse(localStorage.getItem('uranium-diary') || '[]');
         let editingIndex = -1;
 
         function showPage(id) {
@@ -56,16 +76,16 @@
             if (document.getElementById('pin-input').value === '1990') {
                 showPage('list-page');
                 renderNotes();
-            } else { alert('Incorrect PIN'); }
+            } else { alert('ACCESS_DENIED'); }
         }
 
         function renderNotes() {
             const grid = document.getElementById('notes-grid');
             grid.innerHTML = notes.map((n, i) => `
-                <div onclick="viewNote(${i})" class="glass p-5 rounded-3xl cursor-pointer hover:bg-white/10 transition relative group">
-                    <h3 class="font-bold">${n.title}</h3>
+                <div onclick="viewNote(${i})" class="glass p-5 rounded-3xl cursor-pointer hover:bg-white/5 transition relative group">
+                    <h3 class="font-bold text-glow">${n.title}</h3>
                     <p class="text-xs opacity-50">${n.date}</p>
-                    <button onclick="event.stopPropagation(); deleteNote(${i})" class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 text-rose-400 text-xs">DEL</button>
+                    <button onclick="event.stopPropagation(); deleteNote(${i})" class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 text-red-400 text-xs">PURGE</button>
                 </div>
             `).join('');
         }
@@ -102,21 +122,21 @@
         function saveNote() {
             const title = document.getElementById('note-title').value;
             const content = document.getElementById('note-content').value;
-            if(!title) return alert('Title required');
+            if(!title) return alert('TITLE_REQUIRED');
             
             if(editingIndex > -1) {
                 notes[editingIndex] = { title, content, date: new Date().toLocaleDateString() };
             } else {
                 notes.unshift({ title, content, date: new Date().toLocaleDateString() });
             }
-            localStorage.setItem('my-diary', JSON.stringify(notes));
+            localStorage.setItem('uranium-diary', JSON.stringify(notes));
             showList();
         }
 
         function deleteNote(i) {
-            if(confirm('Delete this entry?')) {
+            if(confirm('PURGE_ENTRY?')) {
                 notes.splice(i, 1);
-                localStorage.setItem('my-diary', JSON.stringify(notes));
+                localStorage.setItem('uranium-diary', JSON.stringify(notes));
                 renderNotes();
             }
         }
