@@ -5,30 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Diary</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    </head>
-<body>
-    <div id="root"></div>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 to-pink-50 min-h-screen text-zinc-900">
+
+    <div id="auth-screen" class="fixed inset-0 flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-[2rem] shadow-2xl text-center w-full max-w-xs">
+            <h2 class="text-2xl font-black mb-6">Enter PIN</h2>
+            <input type="password" id="pin-input" maxlength="4" class="w-full text-center text-4xl font-bold py-4 mb-6 bg-zinc-100 rounded-2xl outline-none" placeholder="....">
+            <button onclick="checkPin()" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold">Unlock</button>
+        </div>
+    </div>
+
+    <div id="app-screen" class="hidden p-4 max-w-md mx-auto">
+        <header class="flex justify-between items-center py-4">
+            <h1 class="text-3xl font-black text-indigo-600">My Diary</h1>
+            <button onclick="showEditor()" class="p-3 bg-indigo-600 text-white rounded-full shadow-lg">+</button>
+        </header>
+        <div id="notes-grid" class="grid grid-cols-2 gap-4"></div>
+    </div>
+
+    <div id="editor-screen" class="hidden p-6 max-w-md mx-auto bg-white min-h-screen">
+        <button onclick="hideEditor()" class="mb-4 text-zinc-400">← Back</button>
+        <input type="text" id="note-title" placeholder="Title" class="w-full text-3xl font-black mb-4 outline-none">
+        <textarea id="note-content" class="w-full h-64 outline-none" placeholder="Write your thoughts..."></textarea>
+        <button onclick="saveNote()" class="w-full py-4 bg-indigo-600 text-white rounded-2xl font-bold mt-4">Publish</button>
+    </div>
 
     <script>
-        // Because of the complexity of your app, the "Babel-in-browser" 
-        // method is prone to failure on GitHub.
+        let notes = JSON.parse(localStorage.getItem('diary-notes') || '[]');
         
-        // I have provided a clean "Vanilla JS + Tailwind" version 
-        // that does NOT require React JSX to be compiled, 
-        // which guarantees it will work on GitHub Pages.
-        
-        const root = document.getElementById('root');
-        root.innerHTML = `
-            <div class="min-h-screen bg-indigo-50 flex items-center justify-center p-4">
-                <div class="bg-white p-8 rounded-3xl shadow-xl text-center">
-                    <h1 class="text-2xl font-bold mb-4">Manual Setup Required</h1>
-                    <p class="text-gray-600 mb-6">To run a React app properly on GitHub, you need to use a build tool like Vite.</p>
-                    <a href="https://vitejs.dev/guide/" target="_blank" class="text-indigo-600 font-bold underline">Click here to learn how to set up a professional React project.</a>
+        function checkPin() {
+            if (document.getElementById('pin-input').value === '1990') {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('app-screen').classList.remove('hidden');
+                renderNotes();
+            } else { alert('Incorrect PIN'); }
+        }
+
+        function renderNotes() {
+            const grid = document.getElementById('notes-grid');
+            grid.innerHTML = notes.map((n, i) => `
+                <div class="aspect-square bg-white rounded-3xl p-4 shadow-sm relative">
+                    <p class="font-bold truncate">${n.title}</p>
+                    <button onclick="deleteNote(${i})" class="absolute top-2 right-2 text-rose-500">Trash</button>
                 </div>
-            </div>
-        `;
+            `).join('');
+        }
+
+        function saveNote() {
+            const title = document.getElementById('note-title').value;
+            const content = document.getElementById('note-content').value;
+            if(title) {
+                notes.push({ title, content });
+                localStorage.setItem('diary-notes', JSON.stringify(notes));
+                hideEditor();
+                renderNotes();
+            }
+        }
+
+        function deleteNote(index) {
+            if(confirm('Are you sure?')) {
+                notes.splice(index, 1);
+                localStorage.setItem('diary-notes', JSON.stringify(notes));
+                renderNotes();
+            }
+        }
+
+        function showEditor() { document.getElementById('app-screen').classList.add('hidden'); document.getElementById('editor-screen').classList.remove('hidden'); }
+        function hideEditor() { document.getElementById('editor-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden'); }
     </script>
 </body>
 </html>
