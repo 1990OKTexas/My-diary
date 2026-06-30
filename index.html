@@ -8,59 +8,66 @@
     <style>
         .page { display: none; }
         .active { display: block; }
-        body { background: #0f0326; min-height: 100vh; color: #fff; }
         
-        /* Neon UV Styling */
-        .glass { 
-            background: rgba(18, 255, 120, 0.03); 
-            backdrop-filter: blur(12px); 
-            border: 1px solid rgba(18, 255, 120, 0.2); 
+        /* Updated aesthetic to match Image Describer */
+        body { background: #050505; min-height: 100vh; color: #fff; }
+        
+        .card-style { 
+            background: #0a0a0a; 
+            border: 1px solid #1a1a1a; 
         }
-        .text-glow { color: #12ff78; text-shadow: 0 0 10px #12ff78; }
+
+        .text-glow { color: #12ff78; text-shadow: 0 0 5px rgba(18, 255, 120, 0.5); }
         
-        /* The Cool DIARY Logo */
         .logo-style {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #0f0326;
-            -webkit-text-stroke: 2px #12ff78;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            letter-spacing: -2px;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
         }
         
-        .bg-glow { background: #12ff78; color: #000; box-shadow: 0 0 15px #12ff78; }
-        .border-glow { border: 1px solid #12ff78; }
+        .btn-primary { background: #fff; color: #000; font-weight: bold; }
+        .btn-primary:hover { opacity: 0.9; }
+
+        /* Outlined Inputs */
+        .input-box {
+            background: transparent;
+            border: 1px solid #333;
+            padding: 1rem;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+        }
+        .input-box:focus { border-color: #12ff78; }
     </style>
 </head>
 <body class="p-4 font-mono">
 
-    <!-- 1. AUTH -->
-    <div id="auth-page" class="page active max-w-sm mx-auto mt-20 glass p-8 rounded-3xl text-center">
+    <div id="auth-page" class="page active max-w-sm mx-auto mt-20 card-style p-8 rounded-2xl text-center">
         <h2 class="text-xl font-bold mb-6 text-glow">VAULT_LOCKED</h2>
-        <input type="password" id="pin-input" maxlength="4" class="w-32 bg-[#0f0326] text-center text-2xl font-bold py-3 mb-6 rounded-2xl outline-none border-glow" placeholder="••••">
-        <button onclick="checkPin()" class="w-full py-3 bg-glow rounded-2xl font-bold hover:opacity-80 transition">UNLOCK</button>
+        <input type="password" id="pin-input" maxlength="4" class="w-32 bg-black text-center text-2xl font-bold py-3 mb-6 rounded-lg outline-none border border-gray-700" placeholder="••••">
+        <button onclick="checkPin()" class="w-full py-3 btn-primary rounded-lg">UNLOCK</button>
     </div>
 
-    <!-- 2. LIST -->
     <div id="list-page" class="page max-w-md mx-auto">
         <header class="flex justify-between items-center py-8">
             <h1 class="logo-style">DIARY</h1>
-            <button onclick="openNewNote()" class="p-4 bg-glow rounded-2xl font-bold shadow-lg">+</button>
+            <button onclick="openNewNote()" class="px-6 py-2 btn-primary rounded-lg">+</button>
         </header>
         <div id="notes-grid" class="grid grid-cols-1 gap-4"></div>
     </div>
 
-    <!-- 3. EDITOR / VIEWER -->
     <div id="editor-page" class="page max-w-md mx-auto min-h-[90vh] mt-4">
         <div class="flex justify-between items-center mb-6">
-            <button onclick="showList()" class="text-glow">← BACK</button>
+            <button onclick="showList()" class="text-gray-400 hover:text-white">← BACK</button>
             <div id="action-btns" class="flex gap-4">
-                <button onclick="enableEdit()" id="edit-btn" class="text-2xl">✏️</button>
-                <button onclick="saveNote()" id="publish-btn" class="hidden px-4 py-2 bg-glow rounded-xl text-sm font-bold">PUBLISH</button>
+                <button onclick="enableEdit()" id="edit-btn" class="text-xl">✏️</button>
+                <button onclick="saveNote()" id="publish-btn" class="hidden px-6 py-2 btn-primary rounded-lg text-sm">PUBLISH</button>
             </div>
         </div>
-        <input type="text" id="note-title" readonly class="w-full text-2xl font-bold mb-4 bg-transparent outline-none border-b border-white/10">
-        <textarea id="note-content" readonly class="w-full h-96 bg-transparent outline-none resize-none"></textarea>
+        
+        <input type="text" id="note-title" placeholder="TITLE" readonly class="input-box text-xl font-bold mb-4">
+        <textarea id="note-content" placeholder="ENTER NOTE CONTENT..." readonly class="input-box h-96 resize-none"></textarea>
     </div>
 
     <script>
@@ -82,10 +89,10 @@
         function renderNotes() {
             const grid = document.getElementById('notes-grid');
             grid.innerHTML = notes.map((n, i) => `
-                <div onclick="viewNote(${i})" class="glass p-5 rounded-3xl cursor-pointer hover:bg-white/5 transition relative group">
-                    <h3 class="font-bold text-glow">${n.title}</h3>
-                    <p class="text-xs opacity-50">${n.date}</p>
-                    <button onclick="event.stopPropagation(); deleteNote(${i})" class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 text-red-400 text-xs">PURGE</button>
+                <div onclick="viewNote(${i})" class="card-style p-5 rounded-xl cursor-pointer hover:border-gray-500 transition relative group">
+                    <h3 class="font-bold text-white">${n.title}</h3>
+                    <p class="text-xs text-gray-500">${n.date}</p>
+                    <button onclick="event.stopPropagation(); deleteNote(${i})" class="absolute top-5 right-5 opacity-0 group-hover:opacity-100 text-red-500 text-xs">PURGE</button>
                 </div>
             `).join('');
         }
